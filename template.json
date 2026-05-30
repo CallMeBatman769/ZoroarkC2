@@ -1,0 +1,8 @@
+{
+    "default_error_color": "red",
+    "default_new_connection_color": "green",
+    "default_status_online_color": "green",
+    "default_status_offline_color": "red",
+    "default_connected_clients_color": "blue",
+    "default_ascii_banner_color": "white"
+}
