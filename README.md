@@ -27,3 +27,5 @@ TO DO:
 - Add beacon mode
 
 - Add an export function to export the output
+
+- Add encryption for the network traffic
