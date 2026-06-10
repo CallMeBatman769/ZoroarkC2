@@ -245,7 +245,7 @@ def send_command(command):
 
 def list_clients():
     if not connected_clients:
-        print("Currently no connected clients!")
+        print(f"[[{DEFAULT_CONFIG['default_error_color']}]ERROR[/{DEFAULT_CONFIG['default_error_color']}]]Currently no connected clients!")
     else:
         for client in connected_clients:
             try:
@@ -274,7 +274,10 @@ def draw_gui():
     """Clears the screen and draws the main menu interface."""
     os.system('cls' if os.name == 'nt' else 'clear') 
     banner()
-    print("Welcome to ZoroarkC2")
+    print(f"{40 * " "}╔════════════════════╗")
+    print(f"{40 * " "}║Welcome to ZoroarkC2║")
+    print(f"{40 * " "}╚══╦═══════════════╦═╝")
+    print(f"{40 * " "}   ║               ║")
     
     currentst = ""
 
@@ -282,9 +285,9 @@ def draw_gui():
         currentst = f"[{DEFAULT_CONFIG['default_status_offline_color']}]Offline[/{DEFAULT_CONFIG['default_status_offline_color']}]"
     elif status_online == "Online":
         currentst = f"[{DEFAULT_CONFIG['default_status_online_color']}]Online[/{DEFAULT_CONFIG['default_status_online_color']}]"
-
-    print(f"Connected clients: [{DEFAULT_CONFIG['default_connected_clients_color']}]{connected_clients_count}[/{DEFAULT_CONFIG['default_connected_clients_color']}] | Status: {currentst}")
-    print("")
+    print(f"{30 * " "}╔════════════╩════════╗ ╔════╩══════════╗")
+    print(f"{30 * " "}║Connected clients: [{DEFAULT_CONFIG['default_connected_clients_color']}]{connected_clients_count}[/{DEFAULT_CONFIG['default_connected_clients_color']}] ╠═╣Status: {currentst}║")
+    print(f"{30 * " "}╚═════════════════════╝ ╚═══════════════╝")
 
 def main():
 
